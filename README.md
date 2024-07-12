@@ -71,6 +71,10 @@ The application should now be running on http://localhost:3000.
 
 Contributions are welcome! Please fork the repository and create a pull request with your improvements.
 
+## Acknowledgements
+
+Special thanks to [PedroTech](https://www.youtube.com/watch?v=0gLr-pBIPhI) for his exceptional tutorials and guidance. Their videos on setting up Firebase with React were instrumental in the development of this project. 
+
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 

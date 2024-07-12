@@ -21,7 +21,7 @@ export const Chat = (props) => {
     });
 
     return () => unsubscribe();
-  }, [messagesRef, room]); // Include messagesRef and room in the dependency array
+  }, [room]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

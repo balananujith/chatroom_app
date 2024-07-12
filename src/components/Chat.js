@@ -12,10 +12,9 @@ import {
 
 import "../styles/Chat.css";
 
-export const Chat = (props) => {
-  const { room } = props;
-  const [newMessage, setNewMessage] = useState("");
+export const Chat = ({ room }) => {
   const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
   const messagesRef = collection(db, "messages");
 
   useEffect(() => {
@@ -24,7 +23,7 @@ export const Chat = (props) => {
       where("room", "==", room),
       orderBy("createdAt")
     );
-    const unsuscribe = onSnapshot(queryMessages, (snapshot) => {
+    const unsubscribe = onSnapshot(queryMessages, (snapshot) => {
       let messages = [];
       snapshot.forEach((doc) => {
         messages.push({ ...doc.data(), id: doc.id });
@@ -32,12 +31,11 @@ export const Chat = (props) => {
       setMessages(messages);
     });
 
-    return () => unsuscribe();
-
+    return () => unsubscribe();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     if (newMessage === "") return;
     await addDoc(messagesRef, {
@@ -57,10 +55,8 @@ export const Chat = (props) => {
       </div>
       <div className="messages">
         {messages.map((message) => (
-          <div className="message" key={message.id}>
-            <span className="user">{message.user}</span>
-            {message.text}
-            
+          <div key={message.id} className="message">
+            <span className="user">{message.user}:</span> {message.text}
           </div>
         ))}
       </div>
@@ -68,7 +64,7 @@ export const Chat = (props) => {
         <input
           type="text"
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={(event) => setNewMessage(event.target.value)}
           className="new-message-input"
           placeholder="Type your message here..."
         />

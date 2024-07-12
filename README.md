@@ -1,5 +1,3 @@
-# chatroom_app
-
 # React Firebase Chat Application
 
 This project is a real-time chat application built using React.js and Firebase Firestore for database management. It allows users to enter chat rooms, send messages, and view messages from other users in real time.

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { addDoc, collection, onSnapshot, query, serverTimestamp, where, orderBy } from 'firebase/firestore';
 import { auth, db } from '../firebase-config';
 import '../styles/Chat.css';
@@ -7,10 +7,11 @@ export const Chat = (props) => {
   const { room } = props;
   const [newMessage, setNewMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const messagesRef = useRef(collection(db, 'messages')); // Use useRef for messagesRef
+
+  const messagesRef = collection(db, 'messages');
 
   useEffect(() => {
-    const queryMessages = query(messagesRef.current, where('room', '==', room), orderBy('createdAt', 'asc'));
+    const queryMessages = query(messagesRef, where('room', '==', room), orderBy('createdAt', 'asc'));
     const unsubscribe = onSnapshot(queryMessages, (snapshot) => {
       let messages = [];
       snapshot.forEach((doc) => {
@@ -20,13 +21,13 @@ export const Chat = (props) => {
     });
 
     return () => unsubscribe();
-  }, [room]); // Only include room in the dependency array
+  }, [room]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (newMessage === '') return;
 
-    await addDoc(messagesRef.current, {
+    await addDoc(messagesRef, {
       text: newMessage,
       createdAt: serverTimestamp(),
       user: auth.currentUser.displayName,

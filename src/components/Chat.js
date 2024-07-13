@@ -1,32 +1,44 @@
-import { useEffect, useState } from 'react';
-import { addDoc, collection, onSnapshot, query, serverTimestamp, where, orderBy } from 'firebase/firestore';
-import { auth, db } from '../firebase-config';
-import '../styles/Chat.css';
+import React, { useState, useEffect } from "react";
+import { db, auth } from "../firebase-config";
+import {
+  collection,
+  addDoc,
+  where,
+  serverTimestamp,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
 
-export const Chat = (props) => {
-  const { room } = props;
-  const [newMessage, setNewMessage] = useState('');
+import "../styles/Chat.css";
+
+export const Chat = ({ room }) => {
   const [messages, setMessages] = useState([]);
-
-  const messagesRef = collection(db, 'messages');
+  const [newMessage, setNewMessage] = useState("");
+  const messagesRef = collection(db, "messages");
 
   useEffect(() => {
-    const queryMessages = query(messagesRef, where('room', '==', room), orderBy('createdAt', 'asc'));
-    const unsubscribe = onSnapshot(queryMessages, (snapshot) => {
+    const queryMessages = query(
+      messagesRef,
+      where("room", "==", room),
+      orderBy("createdAt")
+    );
+    const unsuscribe = onSnapshot(queryMessages, (snapshot) => {
       let messages = [];
       snapshot.forEach((doc) => {
         messages.push({ ...doc.data(), id: doc.id });
       });
+      console.log(messages);
       setMessages(messages);
     });
 
-    return () => unsubscribe();
-  }, [messagesRef, room]);
+    return () => unsuscribe();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (newMessage === '') return;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
+    if (newMessage === "") return;
     await addDoc(messagesRef, {
       text: newMessage,
       createdAt: serverTimestamp(),
@@ -34,7 +46,7 @@ export const Chat = (props) => {
       room,
     });
 
-    setNewMessage('');
+    setNewMessage("");
   };
 
   return (
@@ -44,20 +56,18 @@ export const Chat = (props) => {
       </div>
       <div className="messages">
         {messages.map((message) => (
-          <div className="message" key={message.id}>
-            <span className="user">{message.user}</span>: {message.text}{' '}
-            <span className="timestamp">
-              {message.createdAt ? new Date(message.createdAt.seconds * 1000).toLocaleTimeString() : 'Loading...'}
-            </span>
+          <div key={message.id} className="message">
+            <span className="user">{message.user}:</span> {message.text}
           </div>
         ))}
       </div>
       <form onSubmit={handleSubmit} className="new-message-form">
         <input
+          type="text"
+          value={newMessage}
+          onChange={(event) => setNewMessage(event.target.value)}
           className="new-message-input"
           placeholder="Type your message here..."
-          onChange={(e) => setNewMessage(e.target.value)}
-          value={newMessage}
         />
         <button type="submit" className="send-button">
           Send
@@ -66,5 +76,3 @@ export const Chat = (props) => {
     </div>
   );
 };
-
-export default Chat;

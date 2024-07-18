@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase-config";
+import { async } from '@firebase/util';
 import {
   collection,
   addDoc,
